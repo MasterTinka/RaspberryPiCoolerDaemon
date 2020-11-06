@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <unistd.h>
 #include <string>
 
 using namespace std;
@@ -7,11 +8,12 @@ using namespace std;
 class sensors_class
 {
 public:
-    void read_to_string();
-    void read_to_int();
     float get_current_temperature();
     const string& get_sensors_output();
 private:
+    void read_to_string();
+    void read_to_int();
+
     float cur_temperature;
     string sensors_output;
     const string& sensor_output_const = sensors_output;
@@ -50,27 +52,34 @@ void sensors_class::read_to_int()
 
 float sensors_class::get_current_temperature()
 {
+    this->read_to_int();
     return this->cur_temperature;
 }
 
 const string& sensors_class::get_sensors_output()
 {
+    this->read_to_string();
     return this->sensor_output_const;
 }
 
 class programm
 {
 public:
-    void start();
+    [[noreturn]] void start();
 private:
     sensors_class sensors;
 };
 
-void programm::start()
+[[noreturn]] void programm::start()
 {
-    sensors.read_to_int();
-    cout << sensors.get_sensors_output() << endl;
-    cout << sensors.get_current_temperature() << endl;
+    while(true)
+    {
+        while(sensors.get_current_temperature() < 60)
+        {
+            sleep(3);
+        }
+
+    }
 }
 
 int main()
