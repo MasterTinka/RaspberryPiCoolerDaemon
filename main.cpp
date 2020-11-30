@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <string>
+#include <pigpio.h>
 
 using namespace std;
 
@@ -74,16 +75,20 @@ private:
 {
     while(true)
     {
-        while(sensors.get_current_temperature() < 60)
+        while(sensors.get_current_temperature() < 50)
         {
-            sleep(3);
+            gpioWrite(14, 0);
+            sleep(10);
         }
-
+        gpioWrite(14, 1);
+        sleep(600);
     }
 }
 
 int main()
 {
+    gpioInitialise();
+    gpioSetMode(14, PI_OUTPUT);
     programm programm_object;
     programm_object.start();
     return 0;
